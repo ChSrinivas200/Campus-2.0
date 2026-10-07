@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bot, Sparkles, Send, X, MessageSquare, RefreshCw, ChevronRight, Trophy, MapPin, Ticket, Zap, ShieldCheck, Flame, Compass } from 'lucide-react';
+import { callOpenRouterAI } from '../api';
 
 // RAG Knowledge Base Document Index
 const KNOWLEDGE_BASE = [
@@ -113,9 +114,9 @@ export default function AIChatbot({ onNavigate }) {
     };
   };
 
-  const handleSend = (textToSend = null) => {
+  const handleSend = async (textToSend = null) => {
     const text = textToSend || inputValue.trim();
-    if (!text) return;
+    if (!text || isTyping) return;
 
     const userMsg = {
       id: Date.now(),
@@ -128,7 +129,36 @@ export default function AIChatbot({ onNavigate }) {
     if (!textToSend) setInputValue('');
     setIsTyping(true);
 
-    setTimeout(() => {
+    const systemPrompt = `You are the official COLORIDO 2K27 & CAMPUS 2.0 AI Assistant for R.V.R. & J.C. College of Engineering (Guntur, AP).
+Campus & Fest Context:
+- COLORIDO 2K27: Feb 26 & 27, 2027. Mega cultural, sports, and technical extravaganza.
+- Competitions: 38+ events (Choreoday, Battle of the Bands, Web Blitz, Robo Racing, LAN Valorant, Basketball, Kabaddi, Throwball, etc.).
+- Cash Prizes: Over ₹1,82,500+ in total rewards.
+- Passes: Free digital QR authenticated passes generated instantly on registration.
+- Campus 2.0 Features: Living 3D Campus Map, Campus Bot, Smart Spaces study pods, Skill Passport, Campus Quest, Discussion Feed.
+- Admin Passcode: rvrjc2027.
+Be energetic, helpful, accurate, and format with markdown bullets and friendly emojis.`;
+
+    try {
+      // Build conversation history for GPT-4o
+      const recentHistory = messages.slice(-4).map(m => ({
+        role: m.sender === 'user' ? 'user' : 'assistant',
+        content: m.text
+      }));
+      recentHistory.push({ role: 'user', content: text });
+
+      const aiReply = await callOpenRouterAI(recentHistory, systemPrompt);
+
+      const botMsg = {
+        id: Date.now() + 1,
+        sender: 'bot',
+        text: aiReply,
+        source: 'GPT-4o Live Intelligence',
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages((prev) => [...prev, botMsg]);
+    } catch (err) {
+      console.warn('OpenRouter Chatbot fallback to local RAG:', err);
       const ragResult = processQuery(text);
       const botMsg = {
         id: Date.now() + 1,
@@ -139,8 +169,9 @@ export default function AIChatbot({ onNavigate }) {
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages((prev) => [...prev, botMsg]);
+    } finally {
       setIsTyping(false);
-    }, 400);
+    }
   };
 
   const handleActionClick = (target) => {
