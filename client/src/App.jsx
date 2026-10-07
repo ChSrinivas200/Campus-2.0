@@ -21,6 +21,7 @@ import Footer from './components/Footer';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import AdminPage from './pages/AdminPage';
+import { AnimatePresence } from 'framer-motion';
 import Interactive3DBackground from './components/Interactive3DBackground';
 import SplashScreen from './components/SplashScreen';
 
@@ -134,7 +135,9 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#F8F5EE]/90 text-[#121212] font-sans relative selection:bg-[#CCFF00] selection:text-[#121212]">
       {/* Dynamic Campus 2.0 Boot Splash Screen */}
-      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      <AnimatePresence mode="wait">
+        {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      </AnimatePresence>
 
       {/* 3D WebGL Background Scene */}
       <Interactive3DBackground />

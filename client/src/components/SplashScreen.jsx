@@ -1,176 +1,224 @@
 import React, { useState, useEffect } from 'react';
-import { Cpu, Layers, Sparkles, ShieldCheck, Terminal, ArrowRight, Zap, Radio } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, ArrowRight } from 'lucide-react';
 
-const BOOT_STEPS = [
-  { text: 'Mounting RVR&JC Spatial Mesh & WebGL Engines...', icon: Layers },
-  { text: 'Connecting Campus Telemetry & IoT Sensor Grid...', icon: Radio },
-  { text: 'Booting Campus Bot Core & Autonomous Reasoning...', icon: Cpu },
-  { text: 'Syncing Colorido 2K27 Events & Digital Passes...', icon: Zap },
-  { text: 'Campus 2.0 Operating System Online.', icon: ShieldCheck }
+const STATUS_STEPS = [
+  'Initializing Digital Twin...',
+  'Connecting Campus Copilot & Graph...',
+  'Syncing Real-time Student Nodes...',
+  'Campus 2.0 Ready.'
 ];
 
 export default function SplashScreen({ onComplete }) {
   const [progress, setProgress] = useState(0);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [isFadingOut, setIsFadingOut] = useState(false);
+  const [stepIndex, setStepIndex] = useState(0);
 
   useEffect(() => {
-    const totalDuration = 2200; // 2.2s snappy high-impact boot
-    const startTime = Date.now();
+    // 0 -> 100% smooth counter over ~2.4s
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(timer);
+          setTimeout(() => {
+            if (onComplete) onComplete();
+          }, 350);
+          return 100;
+        }
+        return prev + 2;
+      });
+    }, 45);
 
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const rawProgress = Math.min(100, Math.floor((elapsed / totalDuration) * 100));
-      setProgress(rawProgress);
+    // Cycle through status steps
+    const stepInterval = setInterval(() => {
+      setStepIndex((prev) => (prev + 1) % STATUS_STEPS.length);
+    }, 600);
 
-      const stepIndex = Math.min(
-        BOOT_STEPS.length - 1,
-        Math.floor((rawProgress / 100) * BOOT_STEPS.length)
-      );
-      setCurrentStepIndex(stepIndex);
-
-      if (rawProgress >= 100) {
-        clearInterval(interval);
-        handleFinish();
-      }
-    }, 25);
-
-    // Keyboard shortcut to skip immediately
+    // Skip keyboard listener
     const handleKeyDown = (e) => {
       if (e.code === 'Space' || e.code === 'Enter') {
-        handleFinish();
+        clearInterval(timer);
+        clearInterval(stepInterval);
+        setProgress(100);
+        if (onComplete) onComplete();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      clearInterval(interval);
+      clearInterval(timer);
+      clearInterval(stepInterval);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [onComplete]);
 
-  const handleFinish = () => {
-    setIsFadingOut(true);
-    setTimeout(() => {
-      if (onComplete) onComplete();
-    }, 450);
+  const handleSkip = () => {
+    setProgress(100);
+    if (onComplete) onComplete();
   };
 
-  const CurrentStepIcon = BOOT_STEPS[currentStepIndex].icon;
+  const isLatePhase = progress >= 60;
 
   return (
-    <div
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-between p-6 sm:p-10 bg-[#F8F5EE] select-none transition-all duration-500 ease-out ${
-        isFadingOut ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100'
-      }`}
+    <motion.div
+      initial={{ opacity: 1 }}
+      exit={{ 
+        opacity: 0, 
+        scale: 1.03, 
+        transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } 
+      }}
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-between p-6 sm:p-10 bg-[#fafaf9] select-none overflow-hidden"
     >
-      {/* Background Micro Tech Grid */}
+      {/* Background Micro Dot Texture */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-40"
+        className="absolute inset-0 pointer-events-none opacity-30"
         style={{
-          backgroundImage: 'radial-gradient(#121212 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(#1c1917 1px, transparent 1px)',
           backgroundSize: '24px 24px'
         }}
       />
 
-      {/* Top HUD Status Bar */}
+      {/* Top Bar: Subtitle Cross-fade & Skip Button */}
       <div className="relative z-10 w-full max-w-4xl flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
-          <span className="font-mono text-xs font-black uppercase text-[#121212] tracking-wider">
-            SYS: BOOTING
-          </span>
-        </div>
-
-        <div className="hidden sm:flex items-center gap-3">
-          <span className="px-3 py-1 rounded-full bg-white brutal-border text-[11px] font-mono font-bold shadow-[2px_2px_0px_#121212]">
+          <span className="w-2 h-2 rounded-full bg-[#a3e635] animate-ping" />
+          <span className="font-mono text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
             RVR&JC COE // GUNTUR
           </span>
-          <span className="px-3 py-1 rounded-full bg-[#FFE500] brutal-border text-[11px] font-mono font-black shadow-[2px_2px_0px_#121212]">
-            NODE: LIVE
-          </span>
         </div>
 
+        {/* Phase 2 Subtitle Cross-fade */}
+        <AnimatePresence mode="wait">
+          {isLatePhase ? (
+            <motion.div
+              key="phase-2-title"
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.4 }}
+              className="text-center hidden md:block"
+            >
+              <span className="font-mono text-xs font-black tracking-[0.25em] text-neutral-900 uppercase">
+                BUILDING YOUR DIGITAL CAMPUS
+              </span>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="phase-1-title"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="text-center hidden md:block"
+            >
+              <span className="font-mono text-[11px] font-semibold tracking-widest text-neutral-400 uppercase">
+                AUTONOMOUS SYSTEM V2.6
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Skip Button */}
         <button
-          onClick={handleFinish}
-          className="text-xs font-mono font-black px-3.5 py-1.5 rounded-xl bg-white brutal-border hover:bg-[#CCFF00] shadow-[2px_2px_0px_#121212] transition-colors flex items-center gap-1.5 cursor-pointer"
+          onClick={handleSkip}
+          className="text-[11px] font-mono font-bold px-3 py-1.5 rounded-full bg-white border border-neutral-300 text-neutral-700 hover:text-black hover:border-black hover:bg-[#CCFF00] shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
         >
           <span>Skip [Space]</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <ArrowRight className="w-3 h-3" />
         </button>
       </div>
 
-      {/* Center Hero Identity Showcase */}
-      <div className="relative z-10 flex flex-col items-center text-center max-w-2xl my-auto px-4">
+      {/* Central Cyber-Minimalist HUD Orbital Spinner */}
+      <div className="relative z-10 flex flex-col items-center justify-center my-auto">
         
-        {/* Academic Institution Tag */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white brutal-border shadow-[3px_3px_0px_#121212] mb-6">
-          <Sparkles className="w-4 h-4 text-[#FF5A1F]" />
-          <span className="text-xs sm:text-sm font-display font-black tracking-wide text-[#121212]">
-            R.V.R. & J.C. COLLEGE OF ENGINEERING
-          </span>
-        </div>
-
-        {/* Brand Display Mark */}
-        <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4">
-          <span className="font-display font-black text-5xl sm:text-7xl md:text-8xl tracking-tight text-[#121212]">
-            CAMPUS
-          </span>
-          <span className="bg-[#CCFF00] text-[#121212] font-display font-black text-2xl sm:text-4xl md:text-5xl px-3 sm:px-5 py-1 sm:py-2 rounded-2xl brutal-border shadow-[4px_4px_0px_#121212] rotate-[-2deg] animate-pulse">
-            2.0
-          </span>
-        </div>
-
-        {/* Subtitle Definition */}
-        <p className="text-stone-700 font-display font-bold text-sm sm:text-base md:text-lg mb-8 max-w-lg leading-relaxed">
-          Autonomous Living Campus Operating System & Colorido 2K27 Portal
-        </p>
-
-        {/* Interactive Terminal Telemetry Stream */}
-        <div className="w-full max-w-md bg-[#121212] rounded-2xl p-4 text-left shadow-[5px_5px_0px_#CCFF00] brutal-border mb-6">
-          <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/10 text-[11px] font-mono text-stone-400">
-            <span className="flex items-center gap-1.5 text-[#CCFF00]">
-              <Terminal className="w-3.5 h-3.5" />
-              <span>TERMINAL SEQUENCE</span>
-            </span>
-            <span>STEP 0{currentStepIndex + 1}/05</span>
-          </div>
-
-          <div className="flex items-center gap-2.5 text-xs sm:text-sm font-mono font-bold text-white min-h-[28px]">
-            <CurrentStepIcon className="w-4 h-4 text-[#CCFF00] shrink-0" />
-            <span className="truncate text-stone-100">
-              {BOOT_STEPS[currentStepIndex].text}
-            </span>
-          </div>
-        </div>
-
-        {/* Brutalist Chunky Progress Bar */}
-        <div className="w-full max-w-md h-5 sm:h-6 bg-white brutal-border rounded-full overflow-hidden p-0.5 shadow-[4px_4px_0px_#121212] relative">
-          <div
-            className="h-full bg-[#CCFF00] rounded-full transition-all duration-75 ease-out brutal-border-2 border-r-0 relative overflow-hidden"
-            style={{ width: `${progress}%` }}
+        {/* Orbital Ring Cluster */}
+        <div className="relative flex items-center justify-center w-64 h-64 sm:w-72 sm:h-72">
+          
+          {/* Ambient Glowing Neon Core */}
+          <div className="absolute w-16 h-16 bg-[#CCFF00] rounded-full blur-xl opacity-60 animate-pulse pointer-events-none" />
+          <motion.div 
+            animate={{ rotate: [0, 90, 180, 270, 360] }}
+            transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+            className="absolute w-6 h-6 bg-[#CCFF00] rounded-sm border border-neutral-900 shadow-sm rotate-45"
           />
+
+          {/* Outer Ring 1: Clockwise Smooth Easing */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 4.5, ease: "linear" }}
+            className="absolute inset-2 sm:inset-3 rounded-full border-t-2 border-r border-neutral-900 border-b-transparent border-l-transparent"
+          />
+
+          {/* Middle Ring 2: Counter-Clockwise Dashed Arc */}
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ repeat: Infinity, duration: 3.2, ease: "linear" }}
+            className="absolute inset-7 sm:inset-8 rounded-full border-2 border-dashed border-neutral-400 border-t-transparent border-l-transparent opacity-75"
+          />
+
+          {/* Inner Ring 3: Counter-Clockwise Thin Accent Arc */}
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ repeat: Infinity, duration: 2.0, ease: "linear" }}
+            className="absolute inset-12 sm:inset-14 rounded-full border-b-2 border-l border-neutral-800 border-t-transparent border-r-transparent opacity-90"
+          />
+
+          {/* Brand Text Centered Inside Orbital Rings */}
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="relative z-10 flex flex-col items-center pointer-events-none"
+          >
+            <span className="font-display font-black text-2xl sm:text-3xl tracking-tight text-neutral-900 drop-shadow-sm">
+              CAMPUS 2.0
+            </span>
+          </motion.div>
         </div>
 
-        {/* Status Percentage Counter */}
-        <div className="w-full max-w-md flex justify-between items-center mt-3 text-xs font-mono font-black text-[#121212]">
-          <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#FF5A1F] animate-ping" />
-            <span>INITIALIZING PLATFORM</span>
-          </span>
-          <span className="font-display font-black text-sm bg-white px-2.5 py-0.5 rounded-lg brutal-border shadow-[1px_1px_0px_#121212]">
-            {progress}%
-          </span>
+        {/* Progress Bar & Status Section */}
+        <div className="flex flex-col items-center mt-6 gap-3 w-64 sm:w-72">
+          
+          {/* Smooth Linear Progress Line with Glowing Gradient Tail */}
+          <div className="w-full h-[3px] sm:h-1 bg-neutral-200 rounded-full overflow-hidden relative shadow-inner">
+            <motion.div
+              className="h-full bg-gradient-to-r from-neutral-900 via-neutral-800 to-[#a3e635] rounded-full transition-all duration-75 ease-out shadow-[0_0_8px_#a3e635]"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+
+          {/* Stepped Status Ticker & Percentage Counter */}
+          <div className="w-full flex items-center justify-between text-xs font-mono">
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={isLatePhase ? `late-${stepIndex}` : `early-${stepIndex}`}
+                initial={{ opacity: 0, y: 3 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -3 }}
+                transition={{ duration: 0.25 }}
+                className="text-neutral-600 font-medium truncate max-w-[190px]"
+              >
+                {isLatePhase
+                  ? (progress < 85 ? "Loading digital campus layer..." : STATUS_STEPS[stepIndex])
+                  : STATUS_STEPS[stepIndex]
+                }
+              </motion.span>
+            </AnimatePresence>
+
+            <span className="font-display font-black text-neutral-900 bg-white px-2 py-0.5 rounded border border-neutral-200 shadow-xs">
+              {progress}%
+            </span>
+          </div>
+
         </div>
 
       </div>
 
       {/* Bottom Footer Info */}
-      <div className="relative z-10 w-full max-w-4xl flex items-center justify-between text-[11px] font-mono text-stone-500 pt-4">
-        <span>3D WEBGL BIM // NEXT-GEN CAMPUS STACK</span>
-        <span className="font-bold text-[#121212]">COLORIDO 2K27 READY</span>
+      <div className="relative z-10 w-full max-w-4xl flex items-center justify-between text-[11px] font-mono text-neutral-400 pt-4">
+        <span>3D WEBGL BIM // AUTONOMOUS ARCHITECTURE</span>
+        <span className="font-semibold text-neutral-700">COLORIDO 2K27</span>
       </div>
 
-    </div>
+    </motion.div>
   );
 }
