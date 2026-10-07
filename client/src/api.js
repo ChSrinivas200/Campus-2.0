@@ -1,26 +1,20 @@
-// Resolve Backend API URL:
-// 1. Checks import.meta.env (VITE_API_URL or REACT_APP_API_URL)
-// 2. Checks process.env.REACT_APP_API_URL
-// 3. Fallbacks cleanly to local '/api' on localhost or production Render URL
+// Resolve Backend API URL using standard Vite convention VITE_API_URL:
 const getApiBase = () => {
-  const envUrl =
-    (typeof import.meta !== 'undefined' && import.meta.env && (import.meta.env.VITE_API_URL || import.meta.env.REACT_APP_API_URL)) ||
-    (typeof process !== 'undefined' && process.env && (process.env.VITE_API_URL || process.env.REACT_APP_API_URL));
+  const viteUrl = typeof import.meta !== 'undefined' && import.meta.env && (import.meta.env.VITE_API_URL || import.meta.env.REACT_APP_API_URL);
+  const legacyUrl = typeof process !== 'undefined' && process.env && (process.env.VITE_API_URL || process.env.REACT_APP_API_URL);
+  const apiUrl = (viteUrl || legacyUrl || '').trim();
 
-  if (envUrl && typeof envUrl === 'string' && envUrl.trim()) {
-    const trimmed = envUrl.trim().replace(/\/+$/, '');
+  if (apiUrl) {
+    const trimmed = apiUrl.replace(/\/+$/, '');
     return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
   }
 
-  if (typeof window !== 'undefined') {
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      return '/api';
-    }
-    if (window.location.origin.includes('campus-2-0.onrender.com')) {
-      return '/api';
-    }
+  // Local development fallback
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return '/api';
   }
 
+  // Default production Render backend URL
   return 'https://campus-2-0.onrender.com/api';
 };
 
