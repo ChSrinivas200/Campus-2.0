@@ -21,7 +21,7 @@ import Footer from './components/Footer';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import AdminPage from './pages/AdminPage';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import Interactive3DBackground from './components/Interactive3DBackground';
 import SplashScreen from './components/SplashScreen';
 
@@ -43,6 +43,7 @@ export default function App() {
   const [showTicketLookup, setShowTicketLookup] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [showSplash, setShowSplash] = useState(true);
+  const [activeCampusTab, setActiveCampusTab] = useState('twin'); // 'twin' | 'copilot' | 'ecosystem'
 
   const [savedBookmarks, setSavedBookmarks] = useState(() => {
     try {
@@ -122,13 +123,13 @@ export default function App() {
   const handleNavigateToSection = (sectionId) => {
     if (currentPage !== 'campus') {
       setCurrentPage('campus');
-      setTimeout(() => {
-        const el = document.getElementById(sectionId);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      const el = document.getElementById(sectionId);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+    if (sectionId === 'digital-twin' || sectionId === 'spaces' || sectionId === 'intelligence') {
+      setActiveCampusTab('twin');
+    } else if (sectionId === 'copilot' || sectionId === 'pulse') {
+      setActiveCampusTab('copilot');
+    } else if (sectionId === 'collab' || sectionId === 'passport' || sectionId === 'quests' || sectionId === 'discussions') {
+      setActiveCampusTab('ecosystem');
     }
   };
 
@@ -198,36 +199,67 @@ export default function App() {
           />
         </>
       ) : (
-        /* Primary CAMPUS 2.0 Operating System Front Page */
+        /* Primary CAMPUS 2.0 Interactive Tabbed Dashboard */
         <>
-          {/* Hero Section */}
           <CampusHero
-            onOpenCopilot={() => handleNavigateToSection('copilot')}
-            onOpenDigitalTwin={() => handleNavigateToSection('digital-twin')}
-            onOpenColoridoFest={handleOpenColoridoFest}
-            onNavigateToSection={handleNavigateToSection}
-          />
-
-          {/* Feature 02: Living 3D Digital Twin (Direct match from screenshot) */}
-          <CampusDigitalTwin />
-
-          <CampusAICopilot
-            onNavigateToSection={handleNavigateToSection}
+            activeTab={activeCampusTab}
+            onSelectTab={(tab) => setActiveCampusTab(tab)}
             onOpenColoridoFest={handleOpenColoridoFest}
           />
-          <CampusCollabHub onOpenColoridoFest={handleOpenColoridoFest} />
-          <CampusSkillPassport />
-          <CampusQuest />
-          <CampusMemory />
-          <CampusPulseAndAction />
-          <CampusSmartSpaces />
-          <CampusPredictionEngine />
 
-          {/* Student Community Discussion Feed (Direct match from user screenshot) */}
-          <DiscussionFeed
-            onRegisterClick={handleRegisterClick}
-            onGoToLogin={handleLoginClick}
-          />
+          {/* Interactive Single-Screen Tabbed Viewport Container */}
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+            <AnimatePresence mode="wait">
+              {activeCampusTab === 'twin' && (
+                <motion.div
+                  key="tab-twin"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  className="space-y-8"
+                >
+                  <CampusDigitalTwin />
+                  <CampusSmartSpaces />
+                  <CampusPredictionEngine />
+                </motion.div>
+              )}
+
+              {activeCampusTab === 'copilot' && (
+                <motion.div
+                  key="tab-copilot"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  className="space-y-8"
+                >
+                  <CampusAICopilot onOpenColoridoFest={handleOpenColoridoFest} />
+                  <CampusPulseAndAction />
+                </motion.div>
+              )}
+
+              {activeCampusTab === 'ecosystem' && (
+                <motion.div
+                  key="tab-ecosystem"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  className="space-y-8"
+                >
+                  <CampusCollabHub onOpenColoridoFest={handleOpenColoridoFest} />
+                  <CampusSkillPassport />
+                  <CampusQuest />
+                  <CampusMemory />
+                  <DiscussionFeed
+                    onRegisterClick={handleRegisterClick}
+                    onGoToLogin={handleLoginClick}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </main>
 
           <Footer 
             onOpenAdmin={handleAdminClick} 
