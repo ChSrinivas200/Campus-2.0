@@ -138,11 +138,11 @@ export default function DiscussionFeed({ onRegisterClick, onGoToLogin }) {
           </div>
 
           <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-[#121212] font-display uppercase">
-            FESTIVAL DISCUSSION
+            CAMPUS DISCUSSION
           </h2>
 
           <p className="text-xs sm:text-sm md:text-base text-stone-600 font-medium max-w-2xl mx-auto leading-relaxed">
-            Connect with contingents, ask event questions, arrange squad meetups, and share festival hype!
+            Connect with contingents, ask campus questions, arrange study meetups, and share campus updates!
           </p>
         </div>
 
@@ -154,7 +154,7 @@ export default function DiscussionFeed({ onRegisterClick, onGoToLogin }) {
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
               <span className="font-extrabold text-sm sm:text-base text-[#121212]">
-                #general-festival-hall
+                #general-campus-hall
               </span>
             </div>
 
@@ -239,7 +239,7 @@ export default function DiscussionFeed({ onRegisterClick, onGoToLogin }) {
                   >
                     Log In
                   </button>{' '}
-                  to participate in the festival discussion.
+                  to participate in the campus discussion.
                 </p>
 
                 <button
