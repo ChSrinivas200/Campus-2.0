@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Production MERN Stack Web Portal for COLORIDO-2K27 Fest - R.V.R. & J.C. College of Engineering",
   "scripts": {
+    "build": "npm --prefix client install && npm --prefix client run build && npm --prefix server install",
     "dev": "npm run server:dev & npm run client",
     "start": "npm run server",
     "server": "npm --prefix server start",

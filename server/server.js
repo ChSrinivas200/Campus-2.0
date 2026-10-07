@@ -24,6 +24,16 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Serve frontend static files in production if client/dist exists
+const clientDistPath = path.join(__dirname, '../client/dist');
+const fs = require('fs');
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
+
 const PORT = process.env.PORT || 5000;
 
 async function bootstrap() {
