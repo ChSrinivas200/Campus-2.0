@@ -1,0 +1,14 @@
+{
+  "name": "colorido-2k27",
+  "version": "1.0.0",
+  "description": "Production MERN Stack Web Portal for COLORIDO-2K27 Fest - R.V.R. & J.C. College of Engineering",
+  "scripts": {
+    "dev": "npm run server:dev & npm run client",
+    "start": "npm run server",
+    "server": "npm --prefix server start",
+    "server:dev": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "client:build": "npm --prefix client run build",
+    "seed": "npm --prefix server run seed"
+  }
+}
