@@ -22,6 +22,7 @@ import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import AdminPage from './pages/AdminPage';
 import Interactive3DBackground from './components/Interactive3DBackground';
+import SplashScreen from './components/SplashScreen';
 
 export default function App() {
   const getPageFromUrl = () => {
@@ -40,6 +41,7 @@ export default function App() {
   const [generatedTicket, setGeneratedTicket] = useState(null);
   const [showTicketLookup, setShowTicketLookup] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [showSplash, setShowSplash] = useState(true);
 
   const [savedBookmarks, setSavedBookmarks] = useState(() => {
     try {
@@ -131,6 +133,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F8F5EE]/90 text-[#121212] font-sans relative selection:bg-[#CCFF00] selection:text-[#121212]">
+      {/* Dynamic Campus 2.0 Boot Splash Screen */}
+      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+
       {/* 3D WebGL Background Scene */}
       <Interactive3DBackground />
 
