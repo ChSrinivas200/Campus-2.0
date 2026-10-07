@@ -8,11 +8,14 @@ import {
   CheckCircle, 
   Footprints, 
   ArrowUp, 
-  RotateCcw,
-  Sparkles,
-  Navigation
+  RotateCcw, 
+  Sparkles, 
+  Navigation,
+  Check
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { fetchNavigationRoute } from '../api';
+import { sound } from '../utils/soundEffects';
 
 const LOCATIONS = [
   { id: 'gate-1', name: 'Main Campus North Gate 1 (Entrance)', type: 'Gate' },
@@ -47,17 +50,29 @@ export default function CampusNavigation() {
   }, [fromLocation, toLocation, accessibleOnly]);
 
   const handleSwap = () => {
+    sound.playClick();
     const temp = fromLocation;
     setFromLocation(toLocation);
     setToLocation(temp);
   };
 
+  const handleLocationChange = (type, val) => {
+    sound.playPop();
+    if (type === 'from') setFromLocation(val);
+    else setToLocation(val);
+  };
+
+  const handleAccessibleToggle = (checked) => {
+    sound.playClick();
+    setAccessibleOnly(checked);
+  };
+
   return (
-    <section id="navigation" className="py-16 md:py-20 border-b-2 border-[#121212] bg-[#F8F5EE]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="navigation" className="py-8 md:py-12 bg-white rounded-3xl border-2 border-black shadow-[6px_6px_0px_#121212] p-4 sm:p-6 lg:p-8">
+      <div>
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
+        <div className="text-center max-w-3xl mx-auto mb-8 space-y-2">
           <span className="brutal-pill bg-[#FFE500] text-[#121212] text-xs font-black shadow-[2px_2px_0px_#121212]">
             <Compass className="w-3.5 h-3.5 text-[#121212]" />
             SMART & ACCESSIBLE NAVIGATION
@@ -74,7 +89,7 @@ export default function CampusNavigation() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Planner Controls (Left) */}
-          <div className="lg:col-span-5 bg-white rounded-3xl brutal-border p-6 sm:p-7 shadow-[6px_6px_0px_#121212] space-y-5">
+          <div className="lg:col-span-5 bg-[#FAF9F5] rounded-2xl brutal-border p-5 sm:p-7 shadow-[4px_4px_0px_#121212] space-y-5">
             <h3 className="text-lg font-display font-black text-[#121212] flex items-center gap-2">
               <Navigation className="w-5 h-5 text-[#FF5A1F]" />
               <span>Route Parameters</span>
@@ -88,8 +103,8 @@ export default function CampusNavigation() {
               </label>
               <select
                 value={fromLocation}
-                onChange={(e) => setFromLocation(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F8F5EE] brutal-border text-xs sm:text-sm font-bold text-[#121212] focus:outline-none"
+                onChange={(e) => handleLocationChange('from', e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white brutal-border text-xs sm:text-sm font-bold text-[#121212] focus:outline-none cursor-pointer"
               >
                 {LOCATIONS.map(loc => (
                   <option key={loc.id} value={loc.id}>{loc.name}</option>
@@ -101,7 +116,7 @@ export default function CampusNavigation() {
             <div className="flex justify-center -my-1">
               <button
                 onClick={handleSwap}
-                className="p-2 rounded-full bg-stone-100 hover:bg-[#CCFF00] brutal-border text-xs shadow-[2px_2px_0px_#121212] transition-colors cursor-pointer"
+                className="p-2 rounded-full bg-white hover:bg-[#CCFF00] brutal-border text-xs shadow-[2px_2px_0px_#121212] transition-colors cursor-pointer active:scale-95"
                 title="Swap Start and Destination"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-[#121212]" />
@@ -116,8 +131,8 @@ export default function CampusNavigation() {
               </label>
               <select
                 value={toLocation}
-                onChange={(e) => setToLocation(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F8F5EE] brutal-border text-xs sm:text-sm font-bold text-[#121212] focus:outline-none"
+                onChange={(e) => handleLocationChange('to', e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-white brutal-border text-xs sm:text-sm font-bold text-[#121212] focus:outline-none cursor-pointer"
               >
                 {LOCATIONS.map(loc => (
                   <option key={loc.id} value={loc.id}>{loc.name}</option>
@@ -137,7 +152,7 @@ export default function CampusNavigation() {
                 <input
                   type="checkbox"
                   checked={accessibleOnly}
-                  onChange={(e) => setAccessibleOnly(e.target.checked)}
+                  onChange={(e) => handleAccessibleToggle(e.target.checked)}
                   className="w-4 h-4 accent-[#004B6E] cursor-pointer"
                 />
               </label>
@@ -149,13 +164,13 @@ export default function CampusNavigation() {
             {/* Stats Summary */}
             {routeData && (
               <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="p-3 rounded-xl bg-stone-50 brutal-border-2 text-center">
+                <div className="p-3 rounded-xl bg-white brutal-border-2 text-center shadow-xs">
                   <span className="text-[10px] font-mono font-bold text-stone-500 uppercase block">Distance</span>
                   <span className="text-lg font-mono font-black text-[#121212]">
                     {routeData.totalDistanceM} m
                   </span>
                 </div>
-                <div className="p-3 rounded-xl bg-[#CCFF00]/40 brutal-border-2 text-center">
+                <div className="p-3 rounded-xl bg-[#CCFF00] brutal-border-2 text-center shadow-xs">
                   <span className="text-[10px] font-mono font-bold text-stone-700 uppercase block">Walk Time</span>
                   <span className="text-lg font-mono font-black text-[#121212]">
                     ~{routeData.estimatedWalkMinutes} mins
@@ -174,7 +189,7 @@ export default function CampusNavigation() {
               </div>
             )}
 
-            <div className="bg-white rounded-3xl brutal-border p-6 sm:p-8 shadow-[6px_6px_0px_#121212]">
+            <div className="bg-[#FAF9F5] rounded-2xl brutal-border p-5 sm:p-7 shadow-[4px_4px_0px_#121212]">
               <div className="flex items-center justify-between border-b-2 border-[#121212] pb-4 mb-6">
                 <div>
                   <h4 className="font-display font-black text-lg text-[#121212]">
@@ -192,9 +207,15 @@ export default function CampusNavigation() {
               {/* Waypoint Steps */}
               <div className="space-y-6 relative before:absolute before:inset-0 before:left-4 before:w-0.5 before:bg-[#121212]">
                 {routeData?.waypoints?.map((step, idx) => (
-                  <div key={idx} className="relative flex items-start gap-4 pl-1">
+                  <motion.div 
+                    key={idx}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.25, delay: idx * 0.08 }}
+                    className="relative flex items-start gap-4 pl-1"
+                  >
                     {/* Step Node */}
-                    <div className={`w-8 h-8 rounded-full brutal-border shrink-0 flex items-center justify-center font-mono font-black text-xs z-10 ${
+                    <div className={`w-8 h-8 rounded-full brutal-border shrink-0 flex items-center justify-center font-mono font-black text-xs z-10 shadow-xs ${
                       step.accessibleHighlight ? 'bg-[#D4F6FF] text-[#004B6E]' :
                       idx === routeData.waypoints.length - 1 ? 'bg-[#CCFF00] text-[#121212]' :
                       'bg-white text-[#121212]'
@@ -203,8 +224,8 @@ export default function CampusNavigation() {
                     </div>
 
                     {/* Step Card */}
-                    <div className={`flex-1 p-3.5 rounded-2xl brutal-border-2 text-xs sm:text-sm font-medium ${
-                      step.accessibleHighlight ? 'bg-[#D4F6FF]/40 border-[#004B6E]' : 'bg-[#F8F5EE]'
+                    <div className={`flex-1 p-3.5 rounded-2xl brutal-border-2 text-xs sm:text-sm font-medium shadow-xs ${
+                      step.accessibleHighlight ? 'bg-[#D4F6FF]/40 border-[#004B6E]' : 'bg-white'
                     }`}>
                       <p className="text-stone-900 font-bold leading-snug">
                         {step.text}
@@ -215,7 +236,7 @@ export default function CampusNavigation() {
                         </span>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>

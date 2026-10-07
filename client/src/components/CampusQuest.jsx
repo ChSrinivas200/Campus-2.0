@@ -8,11 +8,14 @@ import {
   Star, 
   Check, 
   Zap, 
-  ArrowRight,
-  TrendingUp,
-  Shield
+  ArrowRight, 
+  TrendingUp, 
+  Shield 
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import { fetchCampusQuests, completeCampusQuest } from '../api';
+import { sound } from '../utils/soundEffects';
 
 export default function CampusQuest() {
   const [quests, setQuests] = useState([]);
@@ -30,6 +33,17 @@ export default function CampusQuest() {
   }, []);
 
   const handleComplete = async (questId, xp) => {
+    sound.playChime();
+    try {
+      confetti({
+        particleCount: 70,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+    } catch {
+      // ignore
+    }
+
     const res = await completeCampusQuest(questId);
     if (res && res.success) {
       setUserXp(prev => prev + (xp || 50));
@@ -40,11 +54,11 @@ export default function CampusQuest() {
   };
 
   return (
-    <section id="quests" className="py-16 md:py-20 border-b-2 border-[#121212] bg-[#F8F5EE]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="quests" className="py-8 md:py-12 bg-white rounded-3xl border-2 border-black shadow-[6px_6px_0px_#121212] p-4 sm:p-6 lg:p-8">
+      <div>
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
+        <div className="text-center max-w-3xl mx-auto mb-8 space-y-2">
           <span className="brutal-pill bg-[#FFE500] text-[#121212] text-xs font-black shadow-[2px_2px_0px_#121212]">
             <Trophy className="w-3.5 h-3.5 text-[#121212]" />
             CAMPUS QUEST
@@ -57,11 +71,18 @@ export default function CampusQuest() {
           </p>
         </div>
 
-        {claimedNotice && (
-          <div className="max-w-xl mx-auto p-3.5 rounded-xl bg-[#E8FAD5] brutal-border-2 text-[#1E520A] text-xs font-bold text-center mb-6 shadow-[3px_3px_0px_#121212] animate-fadeIn">
-            {claimedNotice}
-          </div>
-        )}
+        <AnimatePresence>
+          {claimedNotice && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              className="max-w-xl mx-auto p-3.5 rounded-xl bg-[#E8FAD5] brutal-border-2 text-[#1E520A] text-xs font-bold text-center mb-6 shadow-[3px_3px_0px_#121212]"
+            >
+              {claimedNotice}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
@@ -72,9 +93,14 @@ export default function CampusQuest() {
                 <Zap className="w-5 h-5 text-[#FF5A1F]" />
                 <span>Active Quests & Milestones</span>
               </h3>
-              <span className="px-3 py-1 rounded-full bg-[#CCFF00] brutal-border text-xs font-mono font-black text-[#121212]">
+              <motion.span 
+                key={userXp}
+                initial={{ scale: 1.2 }}
+                animate={{ scale: 1 }}
+                className="px-3.5 py-1 rounded-full bg-[#CCFF00] brutal-border text-xs font-mono font-black text-[#121212] shadow-xs"
+              >
                 Your XP: {userXp}
-              </span>
+              </motion.span>
             </div>
 
             <div className="space-y-3">
@@ -108,14 +134,14 @@ export default function CampusQuest() {
 
                   <div>
                     {q.completed ? (
-                      <span className="px-3.5 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1.5">
+                      <span className="px-3.5 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1.5 border border-emerald-300">
                         <Check className="w-3.5 h-3.5" />
                         <span>Completed</span>
                       </span>
                     ) : (
                       <button
                         onClick={() => handleComplete(q.id, q.xpReward)}
-                        className="px-4 py-2 rounded-xl bg-[#CCFF00] brutal-border font-display font-black text-xs text-[#121212] shadow-[2.5px_2.5px_0px_#121212] hover:bg-[#d8ff33] flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                        className="px-4 py-2 rounded-xl bg-[#CCFF00] brutal-border font-display font-black text-xs text-[#121212] shadow-[2.5px_2.5px_0px_#121212] hover:bg-[#d8ff33] flex items-center gap-1.5 cursor-pointer whitespace-nowrap active:scale-95 transition-all"
                       >
                         <Award className="w-3.5 h-3.5" />
                         <span>Claim Quest (+{q.xpReward} XP)</span>
@@ -128,7 +154,7 @@ export default function CampusQuest() {
           </div>
 
           {/* Leaderboard (Right 5 Cols) */}
-          <div className="lg:col-span-5 bg-white rounded-3xl brutal-border p-6 shadow-[6px_6px_0px_#121212] space-y-4">
+          <div className="lg:col-span-5 bg-[#FAF9F5] rounded-2xl brutal-border p-5 sm:p-6 shadow-[4px_4px_0px_#121212] space-y-4">
             <div className="flex items-center justify-between border-b-2 border-[#121212] pb-3">
               <h3 className="font-display font-black text-base text-[#121212] flex items-center gap-2">
                 <Trophy className="w-4 h-4 text-[#FFE500]" />
@@ -143,8 +169,8 @@ export default function CampusQuest() {
               {leaderboard.map((student) => (
                 <div
                   key={student.rank}
-                  className={`p-3 rounded-2xl brutal-border-2 flex items-center justify-between gap-3 ${
-                    student.rank === 1 ? 'bg-[#FFE500]/30 border-[#121212]' : 'bg-[#F8F5EE]'
+                  className={`p-3 rounded-2xl brutal-border-2 flex items-center justify-between gap-3 transition-transform hover:scale-101 ${
+                    student.rank === 1 ? 'bg-[#FFE500]/30 border-[#121212]' : 'bg-white'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -152,7 +178,7 @@ export default function CampusQuest() {
                       student.rank === 1 ? 'bg-[#FFE500] text-[#121212]' :
                       student.rank === 2 ? 'bg-[#D4F6FF] text-[#121212]' :
                       student.rank === 3 ? 'bg-[#FFDEEB] text-[#121212]' :
-                      'bg-white text-stone-600'
+                      'bg-stone-100 text-stone-600'
                     }`}>
                       #{student.rank}
                     </span>
@@ -166,7 +192,7 @@ export default function CampusQuest() {
                     </div>
                   </div>
 
-                  <span className="font-mono font-black text-xs text-[#121212] bg-white px-2.5 py-1 rounded-lg border border-stone-300">
+                  <span className="font-mono font-black text-xs text-[#121212] bg-[#F8F5EE] px-2.5 py-1 rounded-lg border border-stone-300">
                     {student.xp} XP
                   </span>
                 </div>

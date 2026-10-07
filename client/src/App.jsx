@@ -25,6 +25,7 @@ import AdminPage from './pages/AdminPage';
 import { AnimatePresence, motion } from 'framer-motion';
 import Interactive3DBackground from './components/Interactive3DBackground';
 import SplashScreen from './components/SplashScreen';
+import CommandPalette from './components/CommandPalette';
 
 export default function App() {
   const getPageFromUrl = () => {
@@ -44,7 +45,20 @@ export default function App() {
   const [showTicketLookup, setShowTicketLookup] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [showSplash, setShowSplash] = useState(true);
-  const [activeCampusTab, setActiveCampusTab] = useState('twin'); // 'twin' | 'copilot' | 'ecosystem'
+  const [activeCampusTab, setActiveCampusTab] = useState('twin'); // 'twin' | 'copilot' | 'navigation' | 'collab' | 'passport' | 'quest' | 'ecosystem'
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
+
+  // Global keyboard shortcut for Command Palette (Cmd+K / Ctrl+K)
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setShowCommandPalette(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
 
   const [savedBookmarks, setSavedBookmarks] = useState(() => {
     try {
@@ -162,6 +176,7 @@ export default function App() {
         onRegisterClick={() => handleRegisterClick('')}
         onOpenTicketLookup={() => setShowTicketLookup(true)}
         onNavigateToSection={handleNavigateToSection}
+        onOpenCommandPalette={() => setShowCommandPalette(true)}
       />
 
       {/* Dynamic View Routing */}
@@ -363,6 +378,19 @@ export default function App() {
           onClose={() => setToastMessage('')}
         />
       )}
+
+      {/* Spotlight Command Palette (Ctrl+K / Cmd+K) */}
+      <CommandPalette
+        isOpen={showCommandPalette}
+        onClose={() => setShowCommandPalette(false)}
+        onSelectTab={(tab) => {
+          setActiveCampusTab(tab);
+          if (currentPage !== 'campus') {
+            setCurrentPage('campus');
+          }
+        }}
+        onOpenEvents={handleOpenColoridoFest}
+      />
     </div>
   );
 }

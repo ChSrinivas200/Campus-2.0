@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Sparkles, 
   Menu, 
@@ -10,11 +10,16 @@ import {
   Layers, 
   Compass, 
   Building2, 
-  Award,
-  Activity,
-  Zap,
-  LogIn
+  Award, 
+  Activity, 
+  Zap, 
+  LogIn,
+  Volume2,
+  VolumeX,
+  Search
 } from 'lucide-react';
+import confetti from 'canvas-confetti';
+import { sound } from '../utils/soundEffects';
 
 export default function Navbar({
   onOpenTicketLookup,
@@ -24,9 +29,16 @@ export default function Navbar({
   onOpenLogin,
   onRegisterClick,
   currentPage = 'campus',
-  onNavigateToSection
+  onNavigateToSection,
+  onOpenCommandPalette
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(() => sound.isEnabled());
+
+  const toggleSound = () => {
+    const newState = sound.toggle();
+    setSoundEnabled(newState);
+  };
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -78,36 +90,63 @@ export default function Navbar({
             ))}
           </nav>
 
-          {/* 3. Right Action Buttons: Search Bar + Pink Register Now Pill */}
+          {/* 3. Right Action Buttons: Search Pill + Sound FX Toggle + Pink Register Now Pill */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Search Pill Input */}
-            <div className="hidden md:flex items-center gap-2 bg-stone-100/90 hover:bg-stone-100 border border-black/10 rounded-full px-3.5 py-1.5 transition-colors">
-              <span className="text-stone-400 text-xs">🔍</span>
-              <input
-                type="text"
-                placeholder="Search campus..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && searchQuery.trim()) {
-                    onNavigateToSection && onNavigateToSection('copilot');
-                  }
-                }}
-                className="bg-transparent text-xs text-stone-800 placeholder-stone-400 outline-none w-28 lg:w-36 font-medium"
-              />
-            </div>
+            {/* Search Pill Button / Input (triggers Command Palette Spotlight) */}
+            <button
+              onClick={() => {
+                sound.playClick();
+                onOpenCommandPalette && onOpenCommandPalette();
+              }}
+              className="hidden md:flex items-center gap-2 bg-stone-100/90 hover:bg-stone-200/80 border border-black/10 rounded-full px-3.5 py-1.5 transition-all cursor-pointer group"
+              title="Search campus features (Ctrl+K / Cmd+K)"
+            >
+              <Search className="w-3.5 h-3.5 text-stone-400 group-hover:text-black transition-colors" />
+              <span className="text-xs text-stone-400 group-hover:text-stone-700 font-medium">Search campus...</span>
+              <kbd className="hidden lg:inline-block px-1.5 py-0.5 text-[10px] font-mono font-bold bg-white text-stone-500 rounded border border-stone-200">
+                ⌘K
+              </kbd>
+            </button>
+
+            {/* Tactile Sound FX Toggle */}
+            <button
+              onClick={toggleSound}
+              className={`p-2 rounded-full border border-black/15 transition-all cursor-pointer ${
+                soundEnabled 
+                  ? 'bg-[#CCFF00] text-black shadow-xs hover:bg-[#d8ff33]' 
+                  : 'bg-stone-100 text-stone-400 hover:text-black'
+              }`}
+              title={soundEnabled ? 'Tactile Sound Effects ON' : 'Tactile Sound Effects Muted'}
+            >
+              {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+            </button>
 
             <button
-              onClick={onOpenTicketLookup}
+              onClick={() => {
+                sound.playClick();
+                onOpenTicketLookup && onOpenTicketLookup();
+              }}
               className="hidden sm:inline-flex items-center gap-1 text-xs font-bold text-stone-600 hover:text-black px-2.5 py-1.5 rounded-full hover:bg-stone-100 cursor-pointer"
             >
               <Ticket className="w-3.5 h-3.5 text-stone-500" />
               <span>Pass</span>
             </button>
 
-            {/* Register Now Vibrant Pink Pill Button */}
+            {/* Register Now Vibrant Pink Pill Button with Confetti Blast */}
             <button
-              onClick={() => onRegisterClick && onRegisterClick('')}
+              onClick={() => {
+                sound.playChime();
+                try {
+                  confetti({
+                    particleCount: 60,
+                    spread: 70,
+                    origin: { y: 0.15 }
+                  });
+                } catch {
+                  // ignore
+                }
+                onRegisterClick && onRegisterClick('');
+              }}
               className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#FF1493] via-[#E91E63] to-[#D81B60] text-white font-extrabold text-xs border-2 border-black shadow-[2.5px_2.5px_0px_#121212] hover:shadow-[1px_1px_0px_#121212] hover:translate-x-[1px] hover:translate-y-[1px] flex items-center gap-1.5 cursor-pointer transition-all whitespace-nowrap active:scale-95"
             >
               <Sparkles className="w-3.5 h-3.5 text-white animate-pulse" />
@@ -116,7 +155,10 @@ export default function Navbar({
 
             {/* Mobile Hamburger */}
             <button
-              onClick={() => setMobileMenuOpen(prev => !prev)}
+              onClick={() => {
+                sound.playClick();
+                setMobileMenuOpen(prev => !prev);
+              }}
               className="lg:hidden p-2 rounded-xl bg-stone-100 border border-stone-300 text-[#121212] hover:bg-stone-200 cursor-pointer"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
