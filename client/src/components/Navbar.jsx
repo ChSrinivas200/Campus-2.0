@@ -28,16 +28,15 @@ export default function Navbar({
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState('');
+
   const navItems = [
     { name: 'Home', action: () => onGoToHome && onGoToHome(), active: currentPage === 'campus' },
-    { name: 'Campus Map', action: () => onNavigateToSection && onNavigateToSection('digital-twin') },
-    { name: 'Discussions', action: () => onNavigateToSection && onNavigateToSection('discussions') },
-    { name: 'AI Copilot', action: () => onNavigateToSection && onNavigateToSection('copilot') },
-    { name: 'Collab Hub', action: () => onNavigateToSection && onNavigateToSection('collab') },
-    { name: 'Skill Passport', action: () => onNavigateToSection && onNavigateToSection('passport') },
-    { name: 'Campus Quest', action: () => onNavigateToSection && onNavigateToSection('quests') },
-    { name: 'Pulse & Action', action: () => onNavigateToSection && onNavigateToSection('pulse') },
-    { name: 'Fest Hub', action: () => onOpenColoridoFest && onOpenColoridoFest(), active: currentPage === 'colorido' },
+    { name: 'Features', action: () => onNavigateToSection && onNavigateToSection('twin'), active: false },
+    { name: 'Campus Life', action: () => onNavigateToSection && onNavigateToSection('discussions'), active: false },
+    { name: 'Events', action: () => onOpenColoridoFest && onOpenColoridoFest(), active: currentPage === 'colorido' },
+    { name: 'Resources', action: () => onNavigateToSection && onNavigateToSection('navigation'), active: false },
+    { name: 'About', action: () => onNavigateToSection && onNavigateToSection('copilot'), active: false },
   ];
 
   return (
@@ -45,63 +44,71 @@ export default function Navbar({
       <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-3">
           
-          {/* 1. Main Logo: CAMPUS 2.0 */}
+          {/* 1. Main Logo: CAMPUS 2.0 with subtitle */}
           <div className="flex items-center shrink-0">
             <button
               onClick={onGoToHome}
-              className="flex items-center text-left group cursor-pointer select-none"
+              className="flex flex-col items-start text-left group cursor-pointer select-none"
             >
               <div className="flex items-center">
                 <span className="font-display font-black text-2xl sm:text-3xl tracking-tight text-[#121212]">
-                  CAMPUS
-                </span>
-                <span className="bg-[#CCFF00] text-[#121212] font-display font-black text-xs sm:text-sm px-2.5 py-1 rounded-xl border-2 border-black ml-2 shadow-[2px_2px_0px_#121212] group-hover:bg-[#d8ff33] transition-colors">
-                  2.0
+                  CAMPUS 2.0
                 </span>
               </div>
+              <span className="text-[9px] font-mono font-bold tracking-wider text-stone-500 uppercase -mt-0.5">
+                NEXT-GEN AUTONOMOUS CAMPUS INTELLIGENCE
+              </span>
             </button>
           </div>
 
-          {/* 2. Center Navigation Pills (Exact match from screenshot) */}
-          <nav className="hidden xl:flex items-center gap-1.5 font-bold text-xs text-stone-700">
+          {/* 2. Center Navigation Pills (Exact match from reference mockup) */}
+          <nav className="hidden lg:flex items-center gap-1.5 font-bold text-xs text-stone-700">
             {navItems.map((item, idx) => (
               <button
                 key={idx}
                 onClick={item.action}
-                className={`px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
+                className={`px-4 py-1.5 rounded-full transition-all cursor-pointer ${
                   item.active 
-                    ? 'bg-[#121212] text-white font-extrabold shadow-sm' 
+                    ? 'bg-[#FFE500] text-[#121212] font-black border border-black/20 shadow-xs' 
                     : 'hover:bg-stone-100 hover:text-black font-semibold'
                 }`}
               >
                 {item.name}
               </button>
             ))}
-
-            {onOpenLogin && (
-              <button
-                onClick={onOpenLogin}
-                className="px-3.5 py-1.5 rounded-full hover:bg-stone-100 hover:text-black font-semibold transition-all cursor-pointer"
-              >
-                Log In
-              </button>
-            )}
           </nav>
 
-          {/* 3. Right Action Buttons (Pink Register Now Pill with Star from screenshot) */}
+          {/* 3. Right Action Buttons: Search Bar + Pink Register Now Pill */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Search Pill Input */}
+            <div className="hidden md:flex items-center gap-2 bg-stone-100/90 hover:bg-stone-100 border border-black/10 rounded-full px-3.5 py-1.5 transition-colors">
+              <span className="text-stone-400 text-xs">🔍</span>
+              <input
+                type="text"
+                placeholder="Search campus..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && searchQuery.trim()) {
+                    onNavigateToSection && onNavigateToSection('copilot');
+                  }
+                }}
+                className="bg-transparent text-xs text-stone-800 placeholder-stone-400 outline-none w-28 lg:w-36 font-medium"
+              />
+            </div>
+
             <button
               onClick={onOpenTicketLookup}
-              className="hidden sm:inline-flex items-center gap-1 text-xs font-bold text-stone-600 hover:text-black px-3 py-1.5 rounded-full hover:bg-stone-100 cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1 text-xs font-bold text-stone-600 hover:text-black px-2.5 py-1.5 rounded-full hover:bg-stone-100 cursor-pointer"
             >
               <Ticket className="w-3.5 h-3.5 text-stone-500" />
-              <span>Find Pass</span>
+              <span>Pass</span>
             </button>
 
             {/* Register Now Vibrant Pink Pill Button */}
             <button
               onClick={() => onRegisterClick && onRegisterClick('')}
-              className="px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#FF1493] via-[#E91E63] to-[#D81B60] text-white font-extrabold text-xs border-2 border-black shadow-[2.5px_2.5px_0px_#121212] hover:shadow-[1px_1px_0px_#121212] hover:translate-x-[1px] hover:translate-y-[1px] flex items-center gap-1.5 cursor-pointer transition-all whitespace-nowrap active:scale-95"
+              className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#FF1493] via-[#E91E63] to-[#D81B60] text-white font-extrabold text-xs border-2 border-black shadow-[2.5px_2.5px_0px_#121212] hover:shadow-[1px_1px_0px_#121212] hover:translate-x-[1px] hover:translate-y-[1px] flex items-center gap-1.5 cursor-pointer transition-all whitespace-nowrap active:scale-95"
             >
               <Sparkles className="w-3.5 h-3.5 text-white animate-pulse" />
               <span>Register Now</span>
@@ -110,7 +117,7 @@ export default function Navbar({
             {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(prev => !prev)}
-              className="xl:hidden p-2 rounded-xl bg-stone-100 border border-stone-300 text-[#121212] hover:bg-stone-200 cursor-pointer"
+              className="lg:hidden p-2 rounded-xl bg-stone-100 border border-stone-300 text-[#121212] hover:bg-stone-200 cursor-pointer"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>

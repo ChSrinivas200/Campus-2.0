@@ -107,7 +107,7 @@ export default function CampusAICopilot({ onNavigateToSection, onOpenColoridoFes
         <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
           <span className="brutal-pill bg-[#D4F6FF] text-[#004B6E] text-xs font-black shadow-[2px_2px_0px_#121212]">
             <Cpu className="w-3.5 h-3.5 text-[#004B6E]" />
-            FEATURE 01: AI CAMPUS COPILOT
+            AI CAMPUS COPILOT
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black text-[#121212]">
             Campus Bot

@@ -69,7 +69,7 @@ export default function CampusPulseAndAction() {
           <div className="flex items-center justify-center gap-2">
             <span className="brutal-pill bg-[#CCFF00] text-[#121212] text-xs font-black shadow-[2px_2px_0px_#121212]">
               <Activity className="w-3.5 h-3.5 text-[#121212]" />
-              FEATURE 08 & 11: CAMPUS PULSE & ACTION ENGINE
+              CAMPUS PULSE & ACTION ENGINE
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black text-[#121212]">

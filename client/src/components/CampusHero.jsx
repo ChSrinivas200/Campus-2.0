@@ -177,113 +177,126 @@ export default function CampusHero({
         </div>
 
         {/* =========================================================================
-            3 PRIMARY INTERACTIVE SELECTION CARDS SIDE BY SIDE
+            6 INTERACTIVE FEATURE CARDS (EXACT MATCH FROM USER'S REFERENCE DESIGN)
            ========================================================================= */}
         <div className="pt-2">
-          <div className="text-center mb-5">
-            <span className="font-mono text-xs font-black tracking-widest uppercase text-stone-500">
-              CAMPUS 2.0 WORKSPACE NAVIGATION
-            </span>
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            {[
+              {
+                id: 'copilot',
+                icon: '🤖',
+                iconBg: 'bg-[#DBEAFE] text-blue-600',
+                cardBg: 'bg-[#EFF6FF]',
+                cardBorder: 'border-blue-200',
+                activeRing: 'border-blue-600 shadow-[4px_4px_0px_#1E40AF]',
+                title: 'AI Campus Copilot',
+                desc: 'Your personal AI assistant for campus life, academics and opportunities.',
+                arrowBg: 'bg-blue-100 text-blue-700 hover:bg-blue-200',
+              },
+              {
+                id: 'twin',
+                icon: '🗺️',
+                iconBg: 'bg-[#EDE9FE] text-purple-600',
+                cardBg: 'bg-[#F5F3FF]',
+                cardBorder: 'border-purple-200',
+                activeRing: 'border-purple-600 shadow-[4px_4px_0px_#6B21A8]',
+                title: 'Living Digital Twin',
+                desc: 'Real-time digital representation of your campus.',
+                arrowBg: 'bg-purple-100 text-purple-700 hover:bg-purple-200',
+              },
+              {
+                id: 'navigation',
+                icon: '🧭',
+                iconBg: 'bg-[#FEF08A] text-amber-700',
+                cardBg: 'bg-[#FEFCE8]',
+                cardBorder: 'border-amber-200',
+                activeRing: 'border-amber-600 shadow-[4px_4px_0px_#92400E]',
+                title: 'Smart & Accessible Navigation',
+                desc: 'Find places, people and facilities easily.',
+                arrowBg: 'bg-amber-100 text-amber-700 hover:bg-amber-200',
+              },
+              {
+                id: 'collab',
+                icon: '👥',
+                iconBg: 'bg-[#FCE7F3] text-pink-600',
+                cardBg: 'bg-[#FDF2F8]',
+                cardBorder: 'border-pink-200',
+                activeRing: 'border-pink-600 shadow-[4px_4px_0px_#9D174D]',
+                title: 'AI Collaboration Hub',
+                desc: 'Find teammates, clubs, mentors and opportunities.',
+                arrowBg: 'bg-pink-100 text-pink-700 hover:bg-pink-200',
+              },
+              {
+                id: 'passport',
+                icon: '🎯',
+                iconBg: 'bg-[#DCFCE7] text-emerald-600',
+                cardBg: 'bg-[#F0FDF4]',
+                cardBorder: 'border-emerald-200',
+                activeRing: 'border-emerald-600 shadow-[4px_4px_0px_#065F46]',
+                title: 'Campus Skill Passport',
+                desc: 'Track your skills, growth and achievements.',
+                arrowBg: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200',
+              },
+              {
+                id: 'quest',
+                icon: '🏆',
+                iconBg: 'bg-[#E0F2FE] text-sky-600',
+                cardBg: 'bg-[#F0F9FF]',
+                cardBorder: 'border-sky-200',
+                activeRing: 'border-sky-600 shadow-[4px_4px_0px_#075985]',
+                title: 'Campus Quest',
+                desc: 'Participate, earn rewards and make the most of campus life.',
+                arrowBg: 'bg-sky-100 text-sky-700 hover:bg-sky-200',
+              },
+            ].map((card) => {
+              const isActive = activeTab === card.id || (card.id === 'collab' && activeTab === 'ecosystem');
+              return (
+                <button
+                  key={card.id}
+                  onClick={() => onSelectTab && onSelectTab(card.id)}
+                  className={`relative p-4 rounded-2xl border-2 text-left flex flex-col justify-between transition-all duration-200 cursor-pointer group ${card.cardBg} ${
+                    isActive
+                      ? `${card.activeRing} -translate-y-1 scale-[1.02]`
+                      : `${card.cardBorder} hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_#121212] border-black/15`
+                  }`}
+                  style={{ minHeight: '190px' }}
+                >
+                  <div>
+                    {/* Top Icon in rounded container */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg ${card.iconBg} border border-black/10 shadow-xs`}>
+                        {card.icon}
+                      </div>
+                      {isActive && (
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      )}
+                    </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            
-            {/* Tab 1: Explore Digital Twin */}
-            <button
-              onClick={() => onSelectTab && onSelectTab('twin')}
-              className={`p-5 rounded-2xl border-2 border-black transition-all text-left flex items-start gap-4 cursor-pointer relative overflow-hidden ${
-                activeTab === 'twin'
-                  ? 'bg-[#CCFF00] shadow-[5px_5px_0px_#121212] -translate-y-1'
-                  : 'bg-white shadow-[3px_3px_0px_#121212] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#121212] hover:bg-stone-50'
-              }`}
-            >
-              <div className={`w-12 h-12 rounded-xl border-2 border-black flex items-center justify-center shrink-0 shadow-xs ${
-                activeTab === 'twin' ? 'bg-white' : 'bg-[#CCFF00]'
-              }`}>
-                <Layers className="w-6 h-6 text-[#121212]" />
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-display font-black text-base text-[#121212]">
-                    Explore Digital Twin
-                  </h3>
-                  {activeTab === 'twin' && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping" />
+                    {/* Card Title */}
+                    <h3 className="font-display font-black text-sm text-[#121212] leading-snug mb-1.5 group-hover:text-black">
+                      {card.title}
+                    </h3>
+
+                    {/* Card Description */}
+                    <p className="text-[11px] font-medium text-stone-600 leading-relaxed line-clamp-3">
+                      {card.desc}
+                    </p>
+                  </div>
+
+                  {/* Bottom Right Arrow Button */}
+                  <div className="flex justify-end pt-2">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-transform group-hover:translate-x-0.5 ${card.arrowBg} border border-black/10`}>
+                      <ArrowRight className="w-3 h-3" />
+                    </div>
+                  </div>
+
+                  {/* Active highlight bar on bottom */}
+                  {isActive && (
+                    <div className="absolute bottom-0 left-3 right-3 h-1 bg-[#121212] rounded-t-full" />
                   )}
-                </div>
-                <p className="text-xs font-medium text-stone-700 leading-snug">
-                  3D Campus Map, BIM Viewer & Live Sensors
-                </p>
-              </div>
-              {activeTab === 'twin' && (
-                <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black" />
-              )}
-            </button>
-
-            {/* Tab 2: Ask Campus Copilot */}
-            <button
-              onClick={() => onSelectTab && onSelectTab('copilot')}
-              className={`p-5 rounded-2xl border-2 border-black transition-all text-left flex items-start gap-4 cursor-pointer relative overflow-hidden ${
-                activeTab === 'copilot'
-                  ? 'bg-[#CCFF00] shadow-[5px_5px_0px_#121212] -translate-y-1'
-                  : 'bg-white shadow-[3px_3px_0px_#121212] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#121212] hover:bg-stone-50'
-              }`}
-            >
-              <div className={`w-12 h-12 rounded-xl border-2 border-black flex items-center justify-center shrink-0 shadow-xs ${
-                activeTab === 'copilot' ? 'bg-white' : 'bg-[#D4F6FF]'
-              }`}>
-                <Bot className="w-6 h-6 text-[#121212]" />
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-display font-black text-base text-[#121212]">
-                    Ask Campus Copilot
-                  </h3>
-                  {activeTab === 'copilot' && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping" />
-                  )}
-                </div>
-                <p className="text-xs font-medium text-stone-700 leading-snug">
-                  AI Assistant & Real-time GPT-4o Campus Bot
-                </p>
-              </div>
-              {activeTab === 'copilot' && (
-                <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black" />
-              )}
-            </button>
-
-            {/* Tab 3: Campus Ecosystem */}
-            <button
-              onClick={() => onSelectTab && onSelectTab('ecosystem')}
-              className={`p-5 rounded-2xl border-2 border-black transition-all text-left flex items-start gap-4 cursor-pointer relative overflow-hidden ${
-                activeTab === 'ecosystem'
-                  ? 'bg-[#CCFF00] shadow-[5px_5px_0px_#121212] -translate-y-1'
-                  : 'bg-white shadow-[3px_3px_0px_#121212] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#121212] hover:bg-stone-50'
-              }`}
-            >
-              <div className={`w-12 h-12 rounded-xl border-2 border-black flex items-center justify-center shrink-0 shadow-xs ${
-                activeTab === 'ecosystem' ? 'bg-white' : 'bg-[#FFDEEB]'
-              }`}>
-                <Users className="w-6 h-6 text-[#121212]" />
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-display font-black text-base text-[#121212]">
-                    Campus Ecosystem
-                  </h3>
-                  {activeTab === 'ecosystem' && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping" />
-                  )}
-                </div>
-                <p className="text-xs font-medium text-stone-700 leading-snug">
-                  Events, Discussions, Clubs & Collaborations
-                </p>
-              </div>
-              {activeTab === 'ecosystem' && (
-                <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black" />
-              )}
-            </button>
-
+                </button>
+              );
+            })}
           </div>
         </div>
 

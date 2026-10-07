@@ -60,7 +60,7 @@ export default function CampusNavigation() {
         <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
           <span className="brutal-pill bg-[#FFE500] text-[#121212] text-xs font-black shadow-[2px_2px_0px_#121212]">
             <Compass className="w-3.5 h-3.5 text-[#121212]" />
-            FEATURE 03: SMART & ACCESSIBLE NAVIGATION
+            SMART & ACCESSIBLE NAVIGATION
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black text-[#121212]">
             Campus-Specific Waypoint Router

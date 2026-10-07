@@ -33,7 +33,7 @@ export default function CampusPredictionEngine() {
         <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
           <span className="brutal-pill bg-[#CCFF00] text-[#121212] text-xs font-black shadow-[2px_2px_0px_#121212]">
             <Cpu className="w-3.5 h-3.5 text-[#121212]" />
-            FEATURE 10: CAMPUS INTELLIGENCE & PREDICTION ENGINE
+            CAMPUS INTELLIGENCE & PREDICTION ENGINE
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black text-[#121212]">
             From Reactive to Predictive Campus Brain

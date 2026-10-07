@@ -17,7 +17,7 @@ export default function CampusDigitalTwin() {
             <div className="flex items-center gap-2 mb-2">
               <span className="brutal-pill bg-[#CCFF00] text-[#121212] text-xs font-black shadow-[2px_2px_0px_#121212]">
                 <Layers className="w-3.5 h-3.5 text-[#121212]" />
-                FEATURE 02: CAMPUS MAP
+                CAMPUS MAP
               </span>
               <span className="brutal-pill bg-[#FFE500] text-[#121212] text-xs font-black shadow-[2px_2px_0px_#121212]">
                 R.V.R. & J.C. 3D BIM LEVEL

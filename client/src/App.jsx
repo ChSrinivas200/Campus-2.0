@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import CampusHero from './components/CampusHero';
 import CampusDigitalTwin from './components/CampusDigitalTwin';
 import CampusAICopilot from './components/CampusAICopilot';
+import CampusNavigation from './components/CampusNavigation';
 import CampusCollabHub from './components/CampusCollabHub';
 import CampusSkillPassport from './components/CampusSkillPassport';
 import CampusQuest from './components/CampusQuest';
@@ -124,12 +125,20 @@ export default function App() {
     if (currentPage !== 'campus') {
       setCurrentPage('campus');
     }
-    if (sectionId === 'digital-twin' || sectionId === 'spaces' || sectionId === 'intelligence') {
+    if (sectionId === 'digital-twin' || sectionId === 'twin' || sectionId === 'spaces' || sectionId === 'intelligence') {
       setActiveCampusTab('twin');
     } else if (sectionId === 'copilot' || sectionId === 'pulse') {
       setActiveCampusTab('copilot');
-    } else if (sectionId === 'collab' || sectionId === 'passport' || sectionId === 'quests' || sectionId === 'discussions') {
-      setActiveCampusTab('ecosystem');
+    } else if (sectionId === 'navigation' || sectionId === 'routes') {
+      setActiveCampusTab('navigation');
+    } else if (sectionId === 'collab') {
+      setActiveCampusTab('collab');
+    } else if (sectionId === 'passport') {
+      setActiveCampusTab('passport');
+    } else if (sectionId === 'quests' || sectionId === 'quest') {
+      setActiveCampusTab('quest');
+    } else if (sectionId === 'discussions' || sectionId === 'ecosystem') {
+      setActiveCampusTab('quest');
     }
   };
 
@@ -236,6 +245,63 @@ export default function App() {
                 >
                   <CampusAICopilot onOpenColoridoFest={handleOpenColoridoFest} />
                   <CampusPulseAndAction />
+                </motion.div>
+              )}
+
+              {activeCampusTab === 'navigation' && (
+                <motion.div
+                  key="tab-navigation"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  className="space-y-8"
+                >
+                  <CampusNavigation />
+                </motion.div>
+              )}
+
+              {activeCampusTab === 'collab' && (
+                <motion.div
+                  key="tab-collab"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  className="space-y-8"
+                >
+                  <CampusCollabHub onOpenColoridoFest={handleOpenColoridoFest} />
+                </motion.div>
+              )}
+
+              {activeCampusTab === 'passport' && (
+                <motion.div
+                  key="tab-passport"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  className="space-y-8"
+                >
+                  <CampusSkillPassport />
+                </motion.div>
+              )}
+
+              {activeCampusTab === 'quest' && (
+                <motion.div
+                  key="tab-quest"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  className="space-y-8"
+                >
+                  <CampusQuest />
+                  <CampusMemory />
+                  <DiscussionFeed
+                    onRegisterClick={handleRegisterClick}
+                    onGoToLogin={handleLoginClick}
+                  />
                 </motion.div>
               )}
 

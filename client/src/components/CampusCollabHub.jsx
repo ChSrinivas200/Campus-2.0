@@ -51,7 +51,7 @@ export default function CampusCollabHub({ onOpenColoridoFest }) {
         <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
           <span className="brutal-pill bg-[#FFDEEB] text-[#80183E] text-xs font-black shadow-[2px_2px_0px_#121212]">
             <Users className="w-3.5 h-3.5 text-[#80183E]" />
-            FEATURE 04: AI COLLABORATION & OPPORTUNITY HUB
+            AI COLLABORATION & OPPORTUNITY HUB
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-black text-[#121212]">
             Match Skills with Teams & Hackathons
